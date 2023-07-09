@@ -2,7 +2,54 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:ital,wght@0,500;0,600;0,700;1,500&display=swap');
+
 body {
-  font: normal normal normal 100%/1.5 Helvetica Neue, Helvetica, Arial,
-    sans-serif;
+  font: normal normal normal 100%/1.5 'Poppins', Helvetica Neue, Helvetica,
+    Arial, sans-serif;
+}
+
+/*
+* Common styles
+*/
+
+.with-shadow {
+  filter: drop-shadow(0 0.25rem 2rem rgba(0, 0, 0, 0.12));
+}
+
+/*
+* Specific styles
+*/
+
+div.hero-bg {
+  background: url(assets/hero_bg.png) no-repeat center center;
+  background-size: cover;
+}
+
+div.product-thumb-img {
+  background: url(assets/product_bg.png) no-repeat center center;
+}
+
+/*
+
+* Class based animations
+
+*/
+
+ul.product-thumb-actions {
+  opacity: 0;
+  transition: opacity 0.25s linear;
+}
+
+div.product-thumb:hover ul.product-thumb-actions {
+  opacity: 1;
+}
+
+div.product-thumb:hover ul.product-thumb-actions > li {
+  opacity: 1;
+  transition: opacity 0.25s linear;
+}
+
+ul.product-thumb-actions:hover li {
+  opacity: 0.25;
 }

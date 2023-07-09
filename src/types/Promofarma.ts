@@ -1,18 +1,19 @@
-export interface Product {
+export interface Product extends SearchData {
   product_id: string
   updated_at: string
   name: string
   has_stock: boolean
   recommended_prices: {
-    amount: number
-    currency: string
+    amount?: number | undefined
+    currency?: string
+    country?: string
   }[]
   manofacturer: {
     manofacturer_name: string
   }
-  brand: {
+  brand?: {
     brand_id: string
-    name: string
+    name?: string
   }
   main_category: {
     category_id: string
