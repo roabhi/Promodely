@@ -53,3 +53,11 @@ div.product-thumb:hover ul.product-thumb-actions > li {
 ul.product-thumb-actions:hover li {
   opacity: 0.25;
 }
+
+section.overlay {
+  display: none;
+}
+
+section.overlay.show {
+  display: flex;
+}
