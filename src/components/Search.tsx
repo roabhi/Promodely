@@ -1,7 +1,94 @@
 import Main from './Main'
-import OverlayProduct from './OverlayProduct'
+import { useEffect, useState } from 'react'
 
 const Search = () => {
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [data, setData] = useState([])
+  const [search, setSearch] = useState('')
+
+  const endpoint = 'https://graphql.stg.promofarma.com/graphql'
+
+  const headers = {
+    'content-type': 'application/json',
+  }
+  const graphqlQuery = {
+    operationName: 'SearchProducts',
+    query: `query SearchProducts($productName:String!) {
+    response: searchProducts(
+      productName: $productName
+      productHasStock: null
+      productState: null
+      size: 32
+    ) {
+      products {
+        product_id
+        updated_at
+        name
+        product_state
+        has_stock
+        recommended_prices {
+          amount
+          currency
+        }
+        manufacturer {
+          manufacturer_name
+        }
+
+        brand {
+          brand_id
+          name
+        }
+        main_category {
+          category_id
+          category_name
+        }
+      }
+      metadata {
+        totalProducts
+      }
+    }
+  }`,
+    variables: { productName: search },
+  }
+
+  const options = {
+    method: 'POST',
+    headers: headers,
+    body: JSON.stringify(graphqlQuery),
+  }
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (search.length === 0 || search.length > 4) {
+        try {
+          const response = await fetch(endpoint, options)
+          const _data = await response.json()
+
+          setData(_data.data.response.products)
+          setLoading(false)
+
+          console.log('data is ', data)
+        } catch (err: any) {
+          setError(err)
+          console.log(error)
+        }
+      }
+    }
+    fetchData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search])
+
+  const updateSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value)
+  }
+
+  const toggleFilters = (e: React.MouseEvent<HTMLDivElement>) => {
+    document.querySelector('div.filters')?.classList.contains('hidden')
+      ? document.querySelector('div.filters')?.classList.remove('hidden')
+      : document.querySelector('div.filters')?.classList.add('hidden')
+  }
+
   return (
     <>
       <section className="search absolute z-10 mx-auto w-full">
@@ -24,9 +111,14 @@ const Search = () => {
           <input
             type="search"
             placeholder="Buscar + enter..."
+            onChange={updateSearch}
+            value={search}
             className="h-full ml-[2.125rem] pr-4 max-w-[39.25rem] w-full text-[#13201E] focus:outline-none placeholder:italic placeholder:text-[#D4D4D4] search-cancel:appearance-none"
           />
-          <div className="h-[50%] cursor-pointer flex items-center justify-between border-l-[0.063rem] border-[#D4D4D4]">
+          <div
+            className="h-[50%] cursor-pointer flex items-center justify-between border-l-[0.063rem] border-[#D4D4D4]"
+            onClick={toggleFilters}
+          >
             <div className="font-[700] text-[#13201E] ml-[1.563rem] relative">
               <span className="absolute z-10 bg-[#E6007E] rounded-full w-[1.250rem] h-[1.250rem] text-center text-white text-[0.75rem] top-[-0.65rem] pt-[0.063rem] left-[-0.85rem]">
                 3
@@ -296,8 +388,17 @@ const Search = () => {
           </div>
         </div>
       </section>
-      <Main />
-      <OverlayProduct />
+      {loading && (
+        <p className="max-w-[110.750rem] w-full mx-auto text-center mt-[4rem]">
+          Loading...
+        </p>
+      )}
+      {error && (
+        <p className="max-w-[110.750rem] w-full mx-auto text-center mt-[4rem]">
+          {error}
+        </p>
+      )}
+      {data && <Main products={data} loading={loading} />}
     </>
   )
 }

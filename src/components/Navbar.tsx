@@ -26,6 +26,7 @@ const Navbar = () => {
         <img
           className="w-[12.313rem] h-[1.500rem] mx-auto"
           src="./img/Logo_big.png"
+          alt="logo"
         />
       </div>
       <div className="flex items-center gap-6">

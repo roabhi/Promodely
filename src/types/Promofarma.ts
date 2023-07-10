@@ -4,12 +4,12 @@ export interface Product extends SearchData {
   name: string
   has_stock: boolean
   recommended_prices: {
-    amount?: number | undefined
-    currency?: string
+    amount: number
+    currency: string
     country?: string
   }[]
-  manofacturer: {
-    manofacturer_name: string
+  manufacturer: {
+    manufacturer_name: string
   }
   brand?: {
     brand_id: string
