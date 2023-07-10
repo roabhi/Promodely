@@ -1,4 +1,13 @@
-export interface Product extends SearchData {
+export interface SearchData {
+  response: {
+    products: Product[]
+    metadata: {
+      totalProducts: number
+    }
+  }
+}
+
+export interface Product {
   product_id: string
   updated_at: string
   name: string
@@ -18,14 +27,5 @@ export interface Product extends SearchData {
   main_category: {
     category_id: string
     category_name: string
-  }
-}
-
-export interface SearchData {
-  response: {
-    products: Product[]
-    metadata: {
-      totalProducts: number
-    }
   }
 }
