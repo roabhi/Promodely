@@ -7,6 +7,13 @@ const Search = () => {
   const [data, setData] = useState([])
   const [search, setSearch] = useState('')
 
+  const [categories, setCategories] = useState<string[]>([])
+  const [brands, setBrands] = useState<string[]>([])
+
+  // const [allFilters, setAllFilters] = useState(0)
+
+  // ? API SETUP
+
   const endpoint = 'https://graphql.stg.promofarma.com/graphql'
 
   const headers = {
@@ -14,9 +21,11 @@ const Search = () => {
   }
   const graphqlQuery = {
     operationName: 'SearchProducts',
-    query: `query SearchProducts($productName:String!) {
+    query: `query SearchProducts($productName:String!, $categoryIds:[String], $brandIds:[String]) {
     response: searchProducts(
       productName: $productName
+      categoryIds: $categoryIds
+      brandIds: $brandIds
       productHasStock: null
       productState: null
       size: 32
@@ -49,7 +58,11 @@ const Search = () => {
       }
     }
   }`,
-    variables: { productName: search },
+    variables: {
+      productName: search,
+      categoryIds: categories,
+      brandIds: brands,
+    },
   }
 
   const options = {
@@ -57,6 +70,8 @@ const Search = () => {
     headers: headers,
     body: JSON.stringify(graphqlQuery),
   }
+
+  // ? API Caller / Updater
 
   useEffect(() => {
     const fetchData = async () => {
@@ -77,11 +92,64 @@ const Search = () => {
     }
     fetchData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search])
+  }, [search, categories, brands])
 
   const updateSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value)
   }
+
+  // ? filter handling
+
+  const removeValueFromState = (id: string, arr: string) => {
+    if (arr === 'categories') {
+      const newCategories = categories.filter((value) => value !== id)
+      setCategories(newCategories)
+      // setAllFilters((allFilters) => allFilters - 1)
+    } else {
+      const newBrands = brands.filter((value) => value !== id)
+      setBrands(newBrands)
+      // setAllFilters((allFilters) => allFilters - 1)
+    }
+  }
+
+  const updateCategoriesFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const _target = e.target as Element
+
+    if (e.target.checked) {
+      // console.log(_target.getAttribute('data-id'))
+      setCategories((arr: string[]) => [
+        ...arr,
+        _target.getAttribute('data-id') as string,
+      ])
+    } else {
+      removeValueFromState(
+        _target.getAttribute('data-id') as string,
+        'categories'
+      )
+    }
+
+    // console.log('all filters is ', allFilters)
+
+    // setAllFilters((allFilters) => allFilters + 1)
+  }
+
+  const updateBrandsFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const _target = e.target as Element
+
+    if (e.target.checked) {
+      // console.log(_target.getAttribute('data-id'))
+      setBrands((arr: string[]) => [
+        ...arr,
+        _target.getAttribute('data-id') as string,
+      ])
+    } else {
+      removeValueFromState(_target.getAttribute('data-id') as string, 'brands')
+    }
+
+    // setAllFilters((allFilters) => allFilters + 1)
+  }
+
+  // ? UX for filter panel
 
   const toggleFilters = (e: React.MouseEvent<HTMLDivElement>) => {
     document.querySelector('div.filters')?.classList.contains('hidden')
@@ -120,9 +188,9 @@ const Search = () => {
             onClick={toggleFilters}
           >
             <div className="font-[700] text-[#13201E] ml-[1.563rem] relative">
-              <span className="absolute z-10 bg-[#E6007E] rounded-full w-[1.250rem] h-[1.250rem] text-center text-white text-[0.75rem] top-[-0.65rem] pt-[0.063rem] left-[-0.85rem]">
+              {/* <span className="absolute z-10 bg-[#E6007E] rounded-full w-[1.250rem] h-[1.250rem] text-center text-white text-[0.75rem] top-[-0.65rem] pt-[0.063rem] left-[-0.85rem]">
                 3
-              </span>
+              </span> */}
               <div>Filtrar</div>
             </div>
             <div className="ml-[1.250rem]">
@@ -143,7 +211,7 @@ const Search = () => {
             </div>
           </div>
         </div>
-        <div className="filters with-shadow z-100 max-w-[66.750rem] w-full h-[36.000rem] bg-white mx-auto relative rounded-[0.500rem] top-[-1.05rem] hidden">
+        <div className="filters with-shadow z-100 max-w-[66.750rem] w-full h-[36.000rem] bg-white bg-opacity-[0.95] mx-auto relative rounded-[0.500rem] top-[-1.05rem] hidden">
           <span className="block pt-[2.375rem] underline mx-auto w-full text-center text-[#00463D] font-[700] text-[0.63rem] cursor-pointer transition duration-250 hover:text-[#00D264]">
             quitar todos los filtros
           </span>
@@ -159,7 +227,12 @@ const Search = () => {
                       <span>Solar</span>
                     </div>
                     <div>
-                      <input type="checkbox" className="w-[1rem] h-[1rem]" />
+                      <input
+                        type="checkbox"
+                        className="w-[1rem] h-[1rem] category"
+                        data-id="f6738502-b893-4fed-9cf1-75d85f3b34c7"
+                        onChange={updateCategoriesFilter}
+                      />
                     </div>
                   </div>
                 </div>
@@ -169,7 +242,12 @@ const Search = () => {
                       <span>Vitaminas</span>
                     </div>
                     <div>
-                      <input type="checkbox" className="w-[1rem] h-[1rem]" />
+                      <input
+                        type="checkbox"
+                        className="w-[1rem] h-[1rem] category"
+                        data-id="80deddbd-25e0-457d-b60a-2457e5ef9ed0"
+                        onChange={updateCategoriesFilter}
+                      />
                     </div>
                   </div>
                 </div>
@@ -179,7 +257,12 @@ const Search = () => {
                       <span>Tratamiento D&iacute;a</span>
                     </div>
                     <div>
-                      <input type="checkbox" className="w-[1rem] h-[1rem]" />
+                      <input
+                        type="checkbox"
+                        className="w-[1rem] h-[1rem] category"
+                        data-id="b7e60509-f744-45be-ae10-ce8d243fbb1d"
+                        onChange={updateCategoriesFilter}
+                      />
                     </div>
                   </div>
                 </div>
@@ -189,7 +272,12 @@ const Search = () => {
                       <span>Digital</span>
                     </div>
                     <div>
-                      <input type="checkbox" className="w-[1rem] h-[1rem]" />
+                      <input
+                        type="checkbox"
+                        className="w-[1rem] h-[1rem] category"
+                        data-id="141177e3-77eb-41f2-9b0d-b1dccd5102bf"
+                        onChange={updateCategoriesFilter}
+                      />
                     </div>
                   </div>
                 </div>
@@ -199,7 +287,12 @@ const Search = () => {
                       <span>Repelentes</span>
                     </div>
                     <div>
-                      <input type="checkbox" className="w-[1rem] h-[1rem]" />
+                      <input
+                        type="checkbox"
+                        className="w-[1rem] h-[1rem] category"
+                        data-id="1344fb56-db15-4dae-9e02-37046f1528e2"
+                        onChange={updateCategoriesFilter}
+                      />
                     </div>
                   </div>
                 </div>
@@ -209,7 +302,12 @@ const Search = () => {
                       <span>Contorno Ojos</span>
                     </div>
                     <div>
-                      <input type="checkbox" className="w-[1rem] h-[1rem]" />
+                      <input
+                        type="checkbox"
+                        className="w-[1rem] h-[1rem] category"
+                        data-id="2c94f1d4-8adc-4b6e-b22a-69869989536c"
+                        onChange={updateCategoriesFilter}
+                      />
                     </div>
                   </div>
                 </div>
@@ -219,7 +317,12 @@ const Search = () => {
                       <span>Anticaries</span>
                     </div>
                     <div>
-                      <input type="checkbox" className="w-[1rem] h-[1rem]" />
+                      <input
+                        type="checkbox"
+                        className="w-[1rem] h-[1rem] category"
+                        data-id="87fd61a5-2f3c-42b8-b031-b36c62a3295d"
+                        onChange={updateCategoriesFilter}
+                      />
                     </div>
                   </div>
                 </div>
@@ -229,7 +332,12 @@ const Search = () => {
                       <span>Piel Normal</span>
                     </div>
                     <div>
-                      <input type="checkbox" className="w-[1rem] h-[1rem]" />
+                      <input
+                        type="checkbox"
+                        className="w-[1rem] h-[1rem] category"
+                        data-id="956dece3-de67-4eae-bb2b-bd9771e846fd"
+                        onChange={updateCategoriesFilter}
+                      />
                     </div>
                   </div>
                 </div>
@@ -239,7 +347,12 @@ const Search = () => {
                       <span>Limpieza</span>
                     </div>
                     <div>
-                      <input type="checkbox" className="w-[1rem] h-[1rem]" />
+                      <input
+                        type="checkbox"
+                        className="w-[1rem] h-[1rem] category"
+                        data-id="87d23087-00e6-46e2-9668-6e7e5898d723"
+                        onChange={updateCategoriesFilter}
+                      />
                     </div>
                   </div>
                 </div>
@@ -249,7 +362,12 @@ const Search = () => {
                       <span>Cuidado facial y corporal</span>
                     </div>
                     <div>
-                      <input type="checkbox" className="w-[1rem] h-[1rem]" />
+                      <input
+                        type="checkbox"
+                        className="w-[1rem] h-[1rem] category"
+                        data-id="7e66f243-78e7-43ff-bbc9-b5db89ef048a"
+                        onChange={updateCategoriesFilter}
+                      />
                     </div>
                   </div>
                 </div>
@@ -259,7 +377,12 @@ const Search = () => {
                       <span>De 0 a 6 meses</span>
                     </div>
                     <div>
-                      <input type="checkbox" className="w-[1rem] h-[1rem]" />
+                      <input
+                        type="checkbox"
+                        className="w-[1rem] h-[1rem] category"
+                        data-id="adb4f0ca-4bae-47f0-b2ab-ad65a20c4ce5"
+                        onChange={updateCategoriesFilter}
+                      />
                     </div>
                   </div>
                 </div>
@@ -274,7 +397,12 @@ const Search = () => {
                       <span>Heliocare</span>
                     </div>
                     <div>
-                      <input type="checkbox" className="w-[1rem] h-[1rem]" />
+                      <input
+                        type="checkbox"
+                        className="w-[1rem] h-[1rem] brand"
+                        data-id="e085d7b5-6a97-4b33-990d-f92d95475e62"
+                        onChange={updateBrandsFilter}
+                      />
                     </div>
                   </div>
                 </div>
@@ -284,7 +412,12 @@ const Search = () => {
                       <span>Zamb&oacute;n</span>
                     </div>
                     <div>
-                      <input type="checkbox" className="w-[1rem] h-[1rem]" />
+                      <input
+                        type="checkbox"
+                        className="w-[1rem] h-[1rem] brand"
+                        data-id="c816375c-eafa-45b3-a506-3a2dd00f42ea"
+                        onChange={updateBrandsFilter}
+                      />
                     </div>
                   </div>
                 </div>
@@ -294,7 +427,12 @@ const Search = () => {
                       <span>Caudalie</span>
                     </div>
                     <div>
-                      <input type="checkbox" className="w-[1rem] h-[1rem]" />
+                      <input
+                        type="checkbox"
+                        className="w-[1rem] h-[1rem] brand"
+                        data-id="2f82d06b-b35c-49c7-85d1-36811a7d8397"
+                        onChange={updateBrandsFilter}
+                      />
                     </div>
                   </div>
                 </div>
@@ -304,7 +442,12 @@ const Search = () => {
                       <span>Aposan</span>
                     </div>
                     <div>
-                      <input type="checkbox" className="w-[1rem] h-[1rem]" />
+                      <input
+                        type="checkbox"
+                        className="w-[1rem] h-[1rem] brand"
+                        data-id="5865da73-8048-40b3-94db-96e9a9182d5d"
+                        onChange={updateBrandsFilter}
+                      />
                     </div>
                   </div>
                 </div>
@@ -314,7 +457,12 @@ const Search = () => {
                       <span>Relec</span>
                     </div>
                     <div>
-                      <input type="checkbox" className="w-[1rem] h-[1rem]" />
+                      <input
+                        type="checkbox"
+                        className="w-[1rem] h-[1rem] brand"
+                        data-id="ade9f43c-7d65-4fe0-b592-3aff4aafed72"
+                        onChange={updateBrandsFilter}
+                      />
                     </div>
                   </div>
                 </div>
@@ -324,7 +472,12 @@ const Search = () => {
                       <span>Isdin</span>
                     </div>
                     <div>
-                      <input type="checkbox" className="w-[1rem] h-[1rem]" />
+                      <input
+                        type="checkbox"
+                        className="w-[1rem] h-[1rem] brand"
+                        data-id="fdff0064-6a42-441d-a565-5b74f8274d91"
+                        onChange={updateBrandsFilter}
+                      />
                     </div>
                   </div>
                 </div>
@@ -334,7 +487,12 @@ const Search = () => {
                       <span>Lacer</span>
                     </div>
                     <div>
-                      <input type="checkbox" className="w-[1rem] h-[1rem]" />
+                      <input
+                        type="checkbox"
+                        className="w-[1rem] h-[1rem] brand"
+                        data-id="ff09b217-88db-4c08-b005-3d5492059796"
+                        onChange={updateBrandsFilter}
+                      />
                     </div>
                   </div>
                 </div>
@@ -344,7 +502,12 @@ const Search = () => {
                       <span>Vichy</span>
                     </div>
                     <div>
-                      <input type="checkbox" className="w-[1rem] h-[1rem]" />
+                      <input
+                        type="checkbox"
+                        className="w-[1rem] h-[1rem] brand"
+                        data-id="858a1a2c-c6d7-4847-9d20-fab4a595aeb1"
+                        onChange={updateBrandsFilter}
+                      />
                     </div>
                   </div>
                 </div>
@@ -354,7 +517,12 @@ const Search = () => {
                       <span>La Roche Posay</span>
                     </div>
                     <div>
-                      <input type="checkbox" className="w-[1rem] h-[1rem]" />
+                      <input
+                        type="checkbox"
+                        className="w-[1rem] h-[1rem] brand"
+                        data-id="44e4398e-8e29-412e-aacb-f5fa90d5b77e"
+                        onChange={updateBrandsFilter}
+                      />
                     </div>
                   </div>
                 </div>
@@ -364,7 +532,12 @@ const Search = () => {
                       <span>Cocosolis</span>
                     </div>
                     <div>
-                      <input type="checkbox" className="w-[1rem] h-[1rem]" />
+                      <input
+                        type="checkbox"
+                        className="w-[1rem] h-[1rem] brand"
+                        data-id="6cf5c2b6-48b7-46fa-b936-ea206f7bb42b"
+                        onChange={updateBrandsFilter}
+                      />
                     </div>
                   </div>
                 </div>
@@ -374,7 +547,12 @@ const Search = () => {
                       <span>Almir&oacute;n</span>
                     </div>
                     <div>
-                      <input type="checkbox" className="w-[1rem] h-[1rem]" />
+                      <input
+                        type="checkbox"
+                        className="w-[1rem] h-[1rem] brand"
+                        data-id="4230b86a-1fce-4a7c-97f2-66f860cb3936"
+                        onChange={updateBrandsFilter}
+                      />
                     </div>
                   </div>
                 </div>
