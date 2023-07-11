@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Product } from '../types/Promofarma'
+import { Favorite } from '../types/Globals'
 import OverlayProduct from './OverlayProduct'
+// import useLocalStorage from '../hooks/useLocalStorage'
 
 interface MainProps {
   products: Product[]
@@ -8,11 +10,43 @@ interface MainProps {
 }
 
 const Main = ({ products, loading }: MainProps) => {
+  // ? States
+
   const [overlayName, setOverlayName] = useState('')
   const [overlayManufacturer, setOverlayManufacturer] = useState('')
   const [overlayCategory, setOverlayCategory] = useState('')
   const [overlayStock, setOverlayStock] = useState('false')
   const [overlayPrice, setOverlayPrice] = useState('')
+  const [overlayId, setOverlayId] = useState('')
+  const [overlayFaved, setOverlayFaved] = useState('false')
+
+  // ? LocalStorage hook
+
+  // const [favorites, setFavorites] = useLocalStorage('promofarma-favorites', [])
+
+  let storage: Favorite[]
+
+  if (localStorage.getItem('promofarma-favorites')) {
+    storage = JSON.parse(localStorage.getItem('promofarma-favorites')!)
+  } else {
+    localStorage.setItem('promofarma-favorites', JSON.stringify([]))
+  }
+
+  const alreadyFaved = (id: string | null): boolean => {
+    let alreadyFaved = false
+
+    if (storage[0]) {
+      storage.forEach((_obj: Favorite, i: number) => {
+        if (_obj.id === id) {
+          alreadyFaved = true
+        }
+      })
+    }
+
+    return alreadyFaved
+  }
+
+  // ? Overlay
 
   const showProductOverlay = (e: React.MouseEvent<HTMLElement>) => {
     document.querySelector('section.overlay')?.classList.add('show')
@@ -31,6 +65,41 @@ const Main = ({ products, loading }: MainProps) => {
         '.product-price'
       )?.textContent!
     )
+    setOverlayId(_target.getAttribute('data-id')!)
+
+    const _parent = _target.parentNode?.parentNode?.parentNode as HTMLElement
+
+    setOverlayFaved(_parent.getAttribute('data-faved')!)
+  }
+
+  // ? Add Favorite
+
+  const addFavorite = (e: React.MouseEvent<HTMLLIElement>) => {
+    console.log(`storage is ${storage.length} items long`)
+
+    const _target = e.target as HTMLElement
+    let isFaved = alreadyFaved(_target.getAttribute('data-id'))
+
+    if (!isFaved) {
+      const favoriteObject = {
+        id: _target.getAttribute('data-id') as string,
+        manufacturer: _target.getAttribute('data-manufacturer') as string,
+        category: _target.getAttribute('data-category') as string,
+        stock: _target.getAttribute('data-stock') as string,
+      }
+      // setFavorites([...favorites, favoriteObject])
+
+      storage = [...storage, favoriteObject]
+
+      setTimeout(() => {
+        localStorage.setItem('promofarma-favorites', JSON.stringify(storage))
+
+        const _parent = _target.parentNode?.parentNode
+          ?.parentNode as HTMLElement
+
+        _parent.setAttribute('data-faved', 'true')
+      }, 250)
+    }
   }
 
   return (
@@ -42,6 +111,7 @@ const Main = ({ products, loading }: MainProps) => {
               <div
                 key={product.product_id}
                 className="product-thumb w-[26.75rem] h-[21.75rem] mb-[3.750rem]"
+                data-faved={alreadyFaved(product.product_id)}
               >
                 <div className="product-thumb-img-container w-full h-[18.75rem] rounded-[0.500rem] bg-[#F3F3F4] relative z-0">
                   <div className="product-thumb-img w-full h-full cursor-pointer"></div>
@@ -52,6 +122,7 @@ const Main = ({ products, loading }: MainProps) => {
                       data-manufacturer={product.manufacturer.manufacturer_name}
                       data-category={product.main_category.category_name}
                       data-stock={product.has_stock}
+                      data-id={product.product_id}
                     >
                       <svg
                         width="16"
@@ -59,7 +130,7 @@ const Main = ({ products, loading }: MainProps) => {
                         viewBox="0 0 16 17"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
-                        className="mx-auto pointer-events-none"
+                        className="mx-auto pointer-events-none plus-icon"
                       >
                         <path
                           fillRule="evenodd"
@@ -69,24 +140,14 @@ const Main = ({ products, loading }: MainProps) => {
                         />
                       </svg>
                     </li>
-                    <li className="product-thumb-action add-fav w-[2.250rem] h-[2.250rem] bg-[#D9D9D9] rounded-[0.500rem] flex items-center cursor-pointer">
-                      <svg
-                        width="22"
-                        height="20"
-                        viewBox="0 0 22 20"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="mx-auto pointer-events-none"
-                      >
-                        <path
-                          d="M18 12C19.49 10.54 21 8.79 21 6.5C21 5.04131 20.4205 3.64236 19.3891 2.61091C18.3576 1.57946 16.9587 1 15.5 1C13.74 1 12.5 1.5 11 3C9.5 1.5 8.26 1 6.5 1C5.04131 1 3.64236 1.57946 2.61091 2.61091C1.57946 3.64236 1 5.04131 1 6.5C1 8.8 2.5 10.55 4 12L11 19L18 12Z"
-                          stroke="#13201E"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    </li>
+                    <li
+                      className="product-thumb-action add-fav w-[2.250rem] h-[2.250rem] bg-[#D9D9D9] rounded-[0.500rem] flex items-center pointer-events-none"
+                      data-id={product.product_id}
+                      data-manufacturer={product.manufacturer.manufacturer_name}
+                      data-category={product.main_category.category_name}
+                      data-stock={product.has_stock}
+                      // onClick={addFavorite}
+                    ></li>
                   </ul>
                 </div>
                 <div className="product-info text-[1rem] mt-[1.5rem] font-[700] w-[90%] leading-[1.5rem]">
@@ -110,6 +171,8 @@ const Main = ({ products, loading }: MainProps) => {
         category={overlayCategory}
         stock={overlayStock}
         price={overlayPrice}
+        id={overlayId}
+        faved={overlayFaved}
       />
     </>
   )

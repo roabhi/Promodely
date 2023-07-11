@@ -1,9 +1,14 @@
+// import useLocalStorage from '../hooks/useLocalStorage'
+import { Favorite } from '../types/Globals'
+
 interface OverlayProps {
   name: string
   manufacturer: string
   category: string
   stock: string
   price: string
+  id: string
+  faved: string | boolean
 }
 
 const OverlayProduct = ({
@@ -12,13 +17,105 @@ const OverlayProduct = ({
   category,
   stock,
   price,
+  id,
+  faved,
 }: OverlayProps) => {
+  let storage: Favorite[]
+
+  if (localStorage.getItem('promofarma-favorites')) {
+    storage = JSON.parse(localStorage.getItem('promofarma-favorites')!)
+  } else {
+    localStorage.setItem('promofarma-favorites', JSON.stringify([]))
+  }
+
+  // const [favorites, setFavorites] = useLocalStorage(
+  //   'promofarma-favorites',
+  //   currentFavs
+  // )
+
+  const alreadyFaved = (_id: string | null): boolean => {
+    let alreadyFaved = false
+
+    if (storage[0]) {
+      storage.forEach((_obj: Favorite, i: number) => {
+        if (_obj.id === _id) {
+          alreadyFaved = true
+        }
+      })
+    }
+
+    return alreadyFaved
+  }
+
+  const removeFavorite = (e: React.MouseEvent<HTMLButtonElement>) => {
+    let index = 0
+
+    storage.forEach((_obj: Favorite, i: number) => {
+      if (_obj.id === id) index = i
+    })
+
+    storage.splice(index, 1)
+
+    setTimeout(() => {
+      localStorage.setItem('promofarma-favorites', JSON.stringify(storage))
+
+      Array.from(document.querySelectorAll('div.product-thumb')).map(
+        (_obj: Element) => {
+          if (
+            _obj.querySelector('li.open-card')?.getAttribute('data-id') === id
+          ) {
+            _obj.setAttribute('data-faved', 'false')
+          }
+        }
+      )
+
+      document.querySelector('section.overlay')?.classList.remove('show')
+    }, 250)
+  }
+
+  const addFavorite = (e: React.MouseEvent<HTMLButtonElement>) => {
+    console.log(`storage is ${storage.length} items long`)
+
+    let isFaved = alreadyFaved(id)
+
+    if (!isFaved) {
+      const favoriteObject = {
+        id: id as string,
+        manufacturer: manufacturer as string,
+        category: category as string,
+        stock: stock as string,
+      }
+      // setFavorites([...favorites, favoriteObject])
+
+      storage = [...storage, favoriteObject]
+
+      setTimeout(() => {
+        localStorage.setItem('promofarma-favorites', JSON.stringify(storage))
+
+        Array.from(document.querySelectorAll('div.product-thumb')).map(
+          (_obj: Element) => {
+            if (
+              _obj.querySelector('li.open-card')?.getAttribute('data-id') === id
+            ) {
+              _obj.setAttribute('data-faved', 'true')
+            }
+          }
+        )
+
+        document.querySelector('section.overlay')?.classList.remove('show')
+      }, 250)
+    }
+  }
+
   const hideOverlay = (e: React.MouseEvent<HTMLElement>) => {
     document.querySelector('section.overlay')?.classList.remove('show')
   }
 
   return (
-    <section className="overlay fixed z-10 top-0 left-0 w-full h-full flex items-center">
+    <section
+      className="overlay fixed z-10 top-0 left-0 w-full h-full flex items-center"
+      data-id={id}
+    >
       <div className="overlay-bg absolute top-0 left-0 w-full h-full bg-black opacity-[0.65]"></div>
       <div className="overlay-content with-shadow w-[54.75rem] h-[39.75rem] bg-white mx-auto">
         <div className="overlay-content-container flex items-center w-full h-full relative">
@@ -92,9 +189,21 @@ const OverlayProduct = ({
               </div>
             </div>
             <div className="filter-button w-full">
-              <button className="absolute bottom-[2.25rem] mx-auto block max-w-[23.3125rem] w-full h-[3rem] bg-[#00965A] font-[600] mt-[3.250rem] text-white rounded-[0.500rem] transition duration-250 linear hover:bg-[#00D264]">
-                A&ntilde;adir a favoritos
-              </button>
+              {faved === 'true' ? (
+                <button
+                  className="absolute bottom-[2.25rem] mx-auto block max-w-[23.3125rem] w-full h-[3rem] bg-[#E6007E] font-[600] mt-[3.250rem] text-white rounded-[0.500rem] transition duration-250 linear hover:bg-[#ff0000]"
+                  onClick={removeFavorite}
+                >
+                  Quitar de favoritos
+                </button>
+              ) : (
+                <button
+                  className="absolute bottom-[2.25rem] mx-auto block max-w-[23.3125rem] w-full h-[3rem] bg-[#00965A] font-[600] mt-[3.250rem] text-white rounded-[0.500rem] transition duration-250 linear hover:bg-[#00D264]"
+                  onClick={addFavorite}
+                >
+                  A&ntilde;adir a favoritos
+                </button>
+              )}
             </div>
           </div>
         </div>
