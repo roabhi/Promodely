@@ -1,5 +1,5 @@
-import { useQuery, gql } from '@apollo/client'
-import { SearchData, Product } from '../types/Promofarma'
+import { useQuery, gql } from "@apollo/client";
+import { SearchData, Product } from "../types/Promofarma";
 
 const SEARCH_PRODUCTS = gql`
   query SearchProducts {
@@ -37,17 +37,17 @@ const SEARCH_PRODUCTS = gql`
       }
     }
   }
-`
+`;
 
 const TestComponent = () => {
-  const { loading, error, data } = useQuery(SEARCH_PRODUCTS)
+  const { loading, error, data } = useQuery(SEARCH_PRODUCTS);
 
-  if (loading) return <p>Loading...</p>
-  if (error) return <p>Error : {error.message}</p>
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error : {error.message}</p>;
 
   //console.log(data)
 
-  const res: SearchData = data
+  const res: SearchData = data;
 
   return (
     <>
@@ -62,13 +62,13 @@ const TestComponent = () => {
         </div>
       ))}
     </>
-  )
+  );
 
   // return data.response.products.map((product: Product) => (
   //   <div key={product.product_id}>
   //     <h3>{product.name}</h3>
   //   </div>
   // ))
-}
+};
 
-export default TestComponent
+export default TestComponent;

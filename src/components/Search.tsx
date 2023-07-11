@@ -1,26 +1,26 @@
-import Main from './Main'
-import { useEffect, useState } from 'react'
+import Main from "./Main";
+import { useEffect, useState } from "react";
 
 const Search = () => {
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [data, setData] = useState([])
-  const [search, setSearch] = useState('')
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [data, setData] = useState([]);
+  const [search, setSearch] = useState("");
 
-  const [categories, setCategories] = useState<string[]>([])
-  const [brands, setBrands] = useState<string[]>([])
+  const [categories, setCategories] = useState<string[]>([]);
+  const [brands, setBrands] = useState<string[]>([]);
 
   // const [allFilters, setAllFilters] = useState(0)
 
   // ? API SETUP
 
-  const endpoint = 'https://graphql.stg.promofarma.com/graphql'
+  const endpoint = "https://graphql.stg.promofarma.com/graphql";
 
   const headers = {
-    'content-type': 'application/json',
-  }
+    "content-type": "application/json",
+  };
   const graphqlQuery = {
-    operationName: 'SearchProducts',
+    operationName: "SearchProducts",
     query: `query SearchProducts($productName:String!, $categoryIds:[String], $brandIds:[String]) {
     response: searchProducts(
       productName: $productName
@@ -63,13 +63,13 @@ const Search = () => {
       categoryIds: categories,
       brandIds: brands,
     },
-  }
+  };
 
   const options = {
-    method: 'POST',
+    method: "POST",
     headers: headers,
     body: JSON.stringify(graphqlQuery),
-  }
+  };
 
   // ? API Caller / Updater
 
@@ -77,85 +77,85 @@ const Search = () => {
     const fetchData = async () => {
       if (search.length === 0 || search.length > 4) {
         try {
-          const response = await fetch(endpoint, options)
-          const _data = await response.json()
+          const response = await fetch(endpoint, options);
+          const _data = await response.json();
 
-          setData(_data.data.response.products)
-          setLoading(false)
+          setData(_data.data.response.products);
+          setLoading(false);
 
-          console.log('data is ', data)
+          console.log("data is ", data);
         } catch (err: any) {
-          setError(err)
-          console.log(error)
+          setError(err);
+          console.log(error);
         }
       }
-    }
-    fetchData()
+    };
+    fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search, categories, brands])
+  }, [search, categories, brands]);
 
   const updateSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearch(e.target.value)
-  }
+    setSearch(e.target.value);
+  };
 
   // ? filter handling
 
   const removeValueFromState = (id: string, arr: string) => {
-    if (arr === 'categories') {
-      const newCategories = categories.filter((value) => value !== id)
-      setCategories(newCategories)
+    if (arr === "categories") {
+      const newCategories = categories.filter((value) => value !== id);
+      setCategories(newCategories);
       // setAllFilters((allFilters) => allFilters - 1)
     } else {
-      const newBrands = brands.filter((value) => value !== id)
-      setBrands(newBrands)
+      const newBrands = brands.filter((value) => value !== id);
+      setBrands(newBrands);
       // setAllFilters((allFilters) => allFilters - 1)
     }
-  }
+  };
 
   const updateCategoriesFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const _target = e.target as Element
+    const _target = e.target as Element;
 
     if (e.target.checked) {
       // console.log(_target.getAttribute('data-id'))
       setCategories((arr: string[]) => [
         ...arr,
-        _target.getAttribute('data-id') as string,
-      ])
+        _target.getAttribute("data-id") as string,
+      ]);
     } else {
       removeValueFromState(
-        _target.getAttribute('data-id') as string,
-        'categories'
-      )
+        _target.getAttribute("data-id") as string,
+        "categories"
+      );
     }
 
     // console.log('all filters is ', allFilters)
 
     // setAllFilters((allFilters) => allFilters + 1)
-  }
+  };
 
   const updateBrandsFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const _target = e.target as Element
+    const _target = e.target as Element;
 
     if (e.target.checked) {
       // console.log(_target.getAttribute('data-id'))
       setBrands((arr: string[]) => [
         ...arr,
-        _target.getAttribute('data-id') as string,
-      ])
+        _target.getAttribute("data-id") as string,
+      ]);
     } else {
-      removeValueFromState(_target.getAttribute('data-id') as string, 'brands')
+      removeValueFromState(_target.getAttribute("data-id") as string, "brands");
     }
 
     // setAllFilters((allFilters) => allFilters + 1)
-  }
+  };
 
   // ? UX for filter panel
 
   const toggleFilters = (e: React.MouseEvent<HTMLDivElement>) => {
-    document.querySelector('div.filters')?.classList.contains('hidden')
-      ? document.querySelector('div.filters')?.classList.remove('hidden')
-      : document.querySelector('div.filters')?.classList.add('hidden')
-  }
+    document.querySelector("div.filters")?.classList.contains("hidden")
+      ? document.querySelector("div.filters")?.classList.remove("hidden")
+      : document.querySelector("div.filters")?.classList.add("hidden");
+  };
 
   return (
     <>
@@ -578,7 +578,7 @@ const Search = () => {
       )}
       {data && <Main products={data} loading={loading} />}
     </>
-  )
-}
+  );
+};
 
-export default Search
+export default Search;
