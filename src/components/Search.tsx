@@ -77,16 +77,18 @@ const Search = () => {
     const fetchData = async () => {
       if (search.length === 0 || search.length > 4) {
         try {
+          setLoading(true)
+
           const response = await fetch(endpoint, options)
           const _data = await response.json()
 
           setData(_data.data.response.products)
           setLoading(false)
 
-          console.log('data is ', data)
+          // console.log('data is ', data)
         } catch (err: any) {
           setError(err)
-          console.log(error)
+          // console.log(error)
         }
       }
     }
@@ -99,6 +101,18 @@ const Search = () => {
   }
 
   // ? filter handling
+
+  const resetFilters = (e: React.MouseEvent<HTMLElement>) => {
+    setCategories([])
+    setBrands([])
+
+    Array.from(document.querySelectorAll('div.filters-box input')).map(
+      (_obj) => {
+        const _target = _obj as HTMLInputElement
+        _target.checked = false
+      }
+    )
+  }
 
   const removeValueFromState = (id: string, arr: string) => {
     if (arr === 'categories') {
@@ -151,7 +165,9 @@ const Search = () => {
 
   // ? UX for filter panel
 
-  const toggleFilters = (e: React.MouseEvent<HTMLDivElement>) => {
+  const toggleFilters = (
+    e: React.MouseEvent<HTMLDivElement> | React.MouseEvent<HTMLButtonElement>
+  ) => {
     document.querySelector('div.filters')?.classList.contains('hidden')
       ? document.querySelector('div.filters')?.classList.remove('hidden')
       : document.querySelector('div.filters')?.classList.add('hidden')
@@ -161,21 +177,39 @@ const Search = () => {
     <>
       <section className="search absolute z-10 mx-auto w-full">
         <div className="searcher with-shadow relative w-[54.625rem] h-[5.25rem] rounded-[0.5rem] bg-white flex flex-row items-center mx-auto translate-y-[-3.25rem]">
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 20 20"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className="ml-[2.625rem] cursor-pointer"
-          >
-            <path
-              fillRule="evenodd"
-              clipRule="evenodd"
-              d="M2 9.02326C2 5.28207 5.11169 2.2093 9 2.2093C12.8883 2.2093 16 5.28207 16 9.02326C16 12.7644 12.8883 15.8372 9 15.8372C5.11169 15.8372 2 12.7644 2 9.02326ZM9 0.209305C4.05175 0.209305 0 4.13339 0 9.02326C0 13.9131 4.05175 17.8372 9 17.8372C11.1201 17.8372 13.0756 17.1169 14.6184 15.9089L18.3012 19.5061C18.6963 19.892 19.3294 19.8845 19.7153 19.4894C20.1012 19.0943 20.0938 18.4612 19.6987 18.0753L16.0463 14.5079C17.268 13.0056 18 11.1017 18 9.02326C18 4.13339 13.9482 0.209305 9 0.209305Z"
-              fill="#13201E"
-            />
-          </svg>
+          {!loading ? (
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 20 20"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="ml-[2.625rem] cursor-pointer"
+            >
+              <path
+                fillRule="evenodd"
+                clipRule="evenodd"
+                d="M2 9.02326C2 5.28207 5.11169 2.2093 9 2.2093C12.8883 2.2093 16 5.28207 16 9.02326C16 12.7644 12.8883 15.8372 9 15.8372C5.11169 15.8372 2 12.7644 2 9.02326ZM9 0.209305C4.05175 0.209305 0 4.13339 0 9.02326C0 13.9131 4.05175 17.8372 9 17.8372C11.1201 17.8372 13.0756 17.1169 14.6184 15.9089L18.3012 19.5061C18.6963 19.892 19.3294 19.8845 19.7153 19.4894C20.1012 19.0943 20.0938 18.4612 19.6987 18.0753L16.0463 14.5079C17.268 13.0056 18 11.1017 18 9.02326C18 4.13339 13.9482 0.209305 9 0.209305Z"
+                fill="#13201E"
+              />
+            </svg>
+          ) : (
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 20 20"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="ml-[2.625rem] spinner"
+            >
+              <path
+                fillRule="evenodd"
+                clipRule="evenodd"
+                d="M10 0L9.99624 1.47223e-05C7.22213 0.0104506 4.55946 1.0929 2.56496 3.02104L2.55289 3.0329L2 3.58579V1.00001C2 0.447723 1.55228 7.62939e-06 1 7.62939e-06C0.447715 7.62939e-06 0 0.447723 0 1.00001V5.99983V6.00001C0 6.1356 0.0269855 6.26488 0.0758788 6.38279C0.124319 6.49987 0.195951 6.60961 0.290776 6.70499L0.295017 6.70923C0.3904 6.80406 0.500141 6.87569 0.617216 6.92413C0.735123 6.97302 0.86441 7.00001 1 7.00001H6C6.55228 7.00001 7 6.55229 7 6.00001C7 5.44772 6.55228 5.00001 6 5.00001H3.41421L3.96097 4.45326C5.58329 2.88786 7.7473 2.00898 10.0019 2.00001C12.1229 2.0005 14.157 2.8433 15.6569 4.34315C17.1571 5.84344 18 7.87828 18 10C18 10.5523 18.4477 11 19 11C19.5523 11 20 10.5523 20 10C20 7.34784 18.9464 4.8043 17.0711 2.92894C15.1957 1.05358 12.6522 7.62939e-06 10 0ZM1 9.00001C1.55228 9.00001 2 9.44772 2 10C2 12.1217 2.84285 14.1566 4.34315 15.6569C5.84297 17.1567 7.87701 17.9995 9.99803 18C12.2526 17.9911 14.4167 17.1122 16.039 15.5468L16.5858 15H14C13.4477 15 13 14.5523 13 14C13 13.4477 13.4477 13 14 13H18.9993H19C19.001 13 19.002 13 19.003 13C19.1375 13.0004 19.2657 13.0274 19.3828 13.0759C19.5007 13.1247 19.6112 13.197 19.7071 13.2929C19.8902 13.476 19.9874 13.7123 19.9989 13.952C19.9996 13.968 20 13.984 20 14C20 14.0003 20 14.0007 20 14.001V19C20 19.5523 19.5523 20 19 20C18.4477 20 18 19.5523 18 19V16.4142L17.4471 16.9671L17.435 16.979C15.4405 18.9071 12.7779 19.9896 10.0038 20L10 20C7.34784 20 4.8043 18.9464 2.92893 17.0711C1.05357 15.1957 0 12.6522 0 10C0 9.44772 0.447715 9.00001 1 9.00001Z"
+                fill="#13201E"
+              />
+            </svg>
+          )}
           <input
             type="search"
             placeholder="Buscar + enter..."
@@ -212,7 +246,10 @@ const Search = () => {
           </div>
         </div>
         <div className="filters with-shadow z-100 max-w-[66.750rem] w-full h-[36.000rem] bg-white bg-opacity-[0.95] mx-auto relative rounded-[0.500rem] top-[-1.05rem] hidden">
-          <span className="block pt-[2.375rem] underline mx-auto w-full text-center text-[#00463D] font-[700] text-[0.63rem] cursor-pointer transition duration-250 hover:text-[#00D264]">
+          <span
+            className="block pt-[2.375rem] underline mx-auto w-full text-center text-[#00463D] font-[700] text-[0.63rem] cursor-pointer transition duration-250 hover:text-[#00D264]"
+            onClick={resetFilters}
+          >
             quitar todos los filtros
           </span>
           <div className="filters-box flex flex-col items-center mt-[2.75rem]">
@@ -560,17 +597,20 @@ const Search = () => {
             </div>
           </div>
           <div className="filter-button w-full">
-            <button className="mx-auto block w-[17.313rem] h-[3rem] bg-[#00965A] font-[600] mt-[2.625rem] text-white rounded-[0.500rem] transition duration-250 linear hover:bg-[#00D264]">
-              Aplicar filtros
+            <button
+              className="mx-auto block w-[17.313rem] h-[3rem] bg-[#00965A] font-[600] mt-[2.625rem] text-white rounded-[0.500rem] transition duration-250 linear hover:bg-[#00D264]"
+              onClick={toggleFilters}
+            >
+              Volver
             </button>
           </div>
         </div>
       </section>
-      {loading && (
+      {/* {loading && (
         <p className="max-w-[110.750rem] w-full mx-auto text-center mt-[4rem]">
           Loading...
         </p>
-      )}
+      )} */}
       {error && (
         <p className="max-w-[110.750rem] w-full mx-auto text-center mt-[4rem]">
           {error}
