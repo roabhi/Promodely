@@ -28,9 +28,16 @@ describe("Given the promodely app", () => {
     // which are the two default items.
     cy.get("input:first")
       .should("have.attr", "placeholder", "Buscar + enter...")
-      .type("sun");
-    cy.get("div:first").click();
-
+      .type("here comes the sun 🌞 my darling..");
+    //  cy.get("div:first").click();
+    // cy.get("#ajaxElement").should("have.text", "Filtrar");
+    // cy.get("#ajaxElement").contains("Filtrar").click();
+    cy.get("div:first").contains("Filtrar").click();
+    cy.get("input:first").click();
+    cy.get('[type="checkbox"]').check();
+    cy.get("button:first").click();
+    // cy.get("clickbox:first").click();
+    //cy.closest(Selector).click();
     // We can go even further and check that the default todos each contain
     // the correct text. We use the `first` and `last` functions
     // to get just the first and last matched elements individually,
