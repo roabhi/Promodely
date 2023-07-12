@@ -142,17 +142,12 @@ const Search = () => {
         'categories'
       )
     }
-
-    // console.log('all filters is ', allFilters)
-
-    // setAllFilters((allFilters) => allFilters + 1)
   }
 
   const updateBrandsFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
     const _target = e.target as Element
 
     if (e.target.checked) {
-      // console.log(_target.getAttribute('data-id'))
       setBrands((arr: string[]) => [
         ...arr,
         _target.getAttribute('data-id') as string,
@@ -160,8 +155,6 @@ const Search = () => {
     } else {
       removeValueFromState(_target.getAttribute('data-id') as string, 'brands')
     }
-
-    // setAllFilters((allFilters) => allFilters + 1)
   }
 
   // ? UX for filter panel
@@ -223,9 +216,6 @@ const Search = () => {
             onClick={toggleFilters}
           >
             <div className="font-[700] text-[#13201E] ml-[1.563rem] relative">
-              {/* <span className="absolute z-10 bg-[#E6007E] rounded-full w-[1.250rem] h-[1.250rem] text-center text-white text-[0.75rem] top-[-0.65rem] pt-[0.063rem] left-[-0.85rem]">
-                3
-              </span> */}
               <div>Filtrar</div>
             </div>
             <div className="ml-[1.250rem]">
