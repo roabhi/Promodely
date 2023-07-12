@@ -33,8 +33,6 @@ const Main = ({ products, loading }: MainProps) => {
   }
 
   const alreadyFaved = (id: string | null): boolean => {
-    console.log(storage)
-
     let alreadyFaved = false
 
     if (storage && storage[0]) {

@@ -18,6 +18,7 @@ const Search = () => {
 
   const headers = {
     'content-type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
   }
   const graphqlQuery = {
     operationName: 'SearchProducts',
