@@ -33,14 +33,18 @@ const Main = ({ products, loading }: MainProps) => {
   }
 
   const alreadyFaved = (id: string | null): boolean => {
+    console.log(storage)
+
     let alreadyFaved = false
 
-    if (storage[0]) {
+    if (storage && storage[0]) {
       storage.forEach((_obj: Favorite, i: number) => {
         if (_obj.id === id) {
           alreadyFaved = true
         }
       })
+    } else {
+      return false
     }
 
     return alreadyFaved
@@ -74,33 +78,33 @@ const Main = ({ products, loading }: MainProps) => {
 
   // ? Add Favorite
 
-  const addFavorite = (e: React.MouseEvent<HTMLLIElement>) => {
-    console.log(`storage is ${storage.length} items long`)
+  // const addFavorite = (e: React.MouseEvent<HTMLLIElement>) => {
+  //   console.log(`storage is ${storage.length} items long`)
 
-    const _target = e.target as HTMLElement
-    let isFaved = alreadyFaved(_target.getAttribute('data-id'))
+  //   const _target = e.target as HTMLElement
+  //   let isFaved = alreadyFaved(_target.getAttribute('data-id'))
 
-    if (!isFaved) {
-      const favoriteObject = {
-        id: _target.getAttribute('data-id') as string,
-        manufacturer: _target.getAttribute('data-manufacturer') as string,
-        category: _target.getAttribute('data-category') as string,
-        stock: _target.getAttribute('data-stock') as string,
-      }
-      // setFavorites([...favorites, favoriteObject])
+  //   if (!isFaved) {
+  //     const favoriteObject = {
+  //       id: _target.getAttribute('data-id') as string,
+  //       manufacturer: _target.getAttribute('data-manufacturer') as string,
+  //       category: _target.getAttribute('data-category') as string,
+  //       stock: _target.getAttribute('data-stock') as string,
+  //     }
+  //     // setFavorites([...favorites, favoriteObject])
 
-      storage = [...storage, favoriteObject]
+  //     storage = [...storage, favoriteObject]
 
-      setTimeout(() => {
-        localStorage.setItem('promofarma-favorites', JSON.stringify(storage))
+  //     setTimeout(() => {
+  //       localStorage.setItem('promofarma-favorites', JSON.stringify(storage))
 
-        const _parent = _target.parentNode?.parentNode
-          ?.parentNode as HTMLElement
+  //       const _parent = _target.parentNode?.parentNode
+  //         ?.parentNode as HTMLElement
 
-        _parent.setAttribute('data-faved', 'true')
-      }, 250)
-    }
-  }
+  //       _parent.setAttribute('data-faved', 'true')
+  //     }, 250)
+  //   }
+  // }
 
   return (
     <>
@@ -141,7 +145,7 @@ const Main = ({ products, loading }: MainProps) => {
                       </svg>
                     </li>
                     <li
-                      className="product-thumb-action add-fav w-[2.250rem] h-[2.250rem] bg-[#D9D9D9] rounded-[0.500rem] flex items-center pointer-events-none"
+                      className="product-thumb-action add-fav w-[2.250rem] h-[2.250rem] bg-[#D9D9D9] rounded-full flex items-center pointer-events-none"
                       data-id={product.product_id}
                       data-manufacturer={product.manufacturer.manufacturer_name}
                       data-category={product.main_category.category_name}

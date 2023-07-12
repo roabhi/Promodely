@@ -59,7 +59,7 @@ const OverlayProduct = ({
     setTimeout(() => {
       localStorage.setItem('promofarma-favorites', JSON.stringify(storage))
 
-      Array.from(document.querySelectorAll('div.product-thumb')).map(
+      Array.from(document.querySelectorAll('div.product-thumb')).forEach(
         (_obj: Element) => {
           if (
             _obj.querySelector('li.open-card')?.getAttribute('data-id') === id
@@ -92,7 +92,19 @@ const OverlayProduct = ({
       setTimeout(() => {
         localStorage.setItem('promofarma-favorites', JSON.stringify(storage))
 
-        Array.from(document.querySelectorAll('div.product-thumb')).map(
+        const favIndicator = document.querySelector(
+          'div.nav-faved-icon span'
+        ) as Element
+
+        if (favIndicator) {
+          if (favIndicator.classList.contains('hidden')) {
+            favIndicator.classList.remove('hidden')
+          }
+
+          favIndicator.textContent = storage.length.toString()
+        }
+
+        Array.from(document.querySelectorAll('div.product-thumb')).forEach(
           (_obj: Element) => {
             if (
               _obj.querySelector('li.open-card')?.getAttribute('data-id') === id
