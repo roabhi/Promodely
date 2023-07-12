@@ -1,27 +1,23 @@
-import Main from './Main'
-import { useEffect, useState } from 'react'
+import Main from "./Main";
+import { useEffect, useState } from "react";
 
 const Search = () => {
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [data, setData] = useState([])
-  const [search, setSearch] = useState('')
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [data, setData] = useState([]);
+  const [search, setSearch] = useState("");
 
-  const [categories, setCategories] = useState<string[]>([])
-  const [brands, setBrands] = useState<string[]>([])
+  const [categories, setCategories] = useState<string[]>([]);
+  const [brands, setBrands] = useState<string[]>([]);
 
-  // const [allFilters, setAllFilters] = useState(0)
-
-  // ? API SETUP
-
-  const endpoint = 'https://graphql.stg.promofarma.com/graphql'
+  const endpoint = "https://graphql.stg.promofarma.com/graphql";
 
   const headers = {
-    'content-type': 'application/json',
-    'Access-Control-Allow-Origin': '*',
-  }
+    "content-type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+  };
   const graphqlQuery = {
-    operationName: 'SearchProducts',
+    operationName: "SearchProducts",
     query: `query SearchProducts($productName:String!, $categoryIds:[String], $brandIds:[String]) {
     response: searchProducts(
       productName: $productName
@@ -64,114 +60,107 @@ const Search = () => {
       categoryIds: categories,
       brandIds: brands,
     },
-  }
+  };
 
   const options = {
-    method: 'POST',
+    method: "POST",
     headers: headers,
     body: JSON.stringify(graphqlQuery),
-  }
-
-  // ? API Caller / Updater
+  };
 
   useEffect(() => {
-    if (!data) return
+    if (!data) return;
 
     const fetchData = async () => {
       if (search.length === 0 || search.length > 4) {
         try {
-          setLoading(true)
+          setLoading(true);
 
-          const response = await fetch(endpoint, options)
-          const _data = await response.json()
+          const response = await fetch(endpoint, options);
+          const _data = await response.json();
 
-          setData(_data.data.response.products)
-          setLoading(false)
-          // console.log('data is ', data)
+          setData(_data.data.response.products);
+          setLoading(false);
         } catch (err: any) {
-          setError(err)
-          // console.log(error)
+          setError(err);
         }
       }
-    }
-    fetchData()
+    };
+    fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search, categories, brands])
+  }, [search, categories, brands]);
 
   const updateSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearch(e.target.value)
-  }
+    setSearch(e.target.value);
+  };
 
   // ? filter handling
 
   const resetFilters = (e: React.MouseEvent<HTMLElement>) => {
-    setCategories([])
-    setBrands([])
+    setCategories([]);
+    setBrands([]);
 
-    Array.from(document.querySelectorAll('div.filters-box input')).forEach(
+    Array.from(document.querySelectorAll("div.filters-box input")).forEach(
       (_obj) => {
-        const _target = _obj as HTMLInputElement
-        _target.checked = false
+        const _target = _obj as HTMLInputElement;
+        _target.checked = false;
       }
-    )
-  }
+    );
+  };
 
   const removeValueFromState = (id: string, arr: string) => {
-    if (arr === 'categories') {
-      const newCategories = categories.filter((value) => value !== id)
-      setCategories(newCategories)
-      // setAllFilters((allFilters) => allFilters - 1)
+    if (arr === "categories") {
+      const newCategories = categories.filter((value) => value !== id);
+      setCategories(newCategories);
     } else {
-      const newBrands = brands.filter((value) => value !== id)
-      setBrands(newBrands)
-      // setAllFilters((allFilters) => allFilters - 1)
+      const newBrands = brands.filter((value) => value !== id);
+      setBrands(newBrands);
     }
-  }
+  };
 
   const updateCategoriesFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const _target = e.target as Element
+    const _target = e.target as Element;
 
     if (e.target.checked) {
-      // console.log(_target.getAttribute('data-id'))
       setCategories((arr: string[]) => [
         ...arr,
-        _target.getAttribute('data-id') as string,
-      ])
+        _target.getAttribute("data-id") as string,
+      ]);
     } else {
       removeValueFromState(
-        _target.getAttribute('data-id') as string,
-        'categories'
-      )
+        _target.getAttribute("data-id") as string,
+        "categories"
+      );
     }
-  }
+  };
 
   const updateBrandsFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const _target = e.target as Element
+    const _target = e.target as Element;
 
     if (e.target.checked) {
       setBrands((arr: string[]) => [
         ...arr,
-        _target.getAttribute('data-id') as string,
-      ])
+        _target.getAttribute("data-id") as string,
+      ]);
     } else {
-      removeValueFromState(_target.getAttribute('data-id') as string, 'brands')
+      removeValueFromState(_target.getAttribute("data-id") as string, "brands");
     }
-  }
+  };
 
   // ? UX for filter panel
 
   const toggleFilters = (
     e: React.MouseEvent<HTMLDivElement> | React.MouseEvent<HTMLButtonElement>
   ) => {
-    document.querySelector('div.filters')?.classList.contains('hidden')
-      ? document.querySelector('div.filters')?.classList.remove('hidden')
-      : document.querySelector('div.filters')?.classList.add('hidden')
-  }
+    document.querySelector("div.filters")?.classList.contains("hidden")
+      ? document.querySelector("div.filters")?.classList.remove("hidden")
+      : document.querySelector("div.filters")?.classList.add("hidden");
+  };
 
   return (
     <>
       <section className="search absolute z-10 mx-auto w-full">
-        <div className="searcher with-shadow relative w-[54.625rem] h-[5.25rem] rounded-[0.5rem] bg-white flex flex-row items-center mx-auto translate-y-[-3.25rem]">
+        <div className="searcher with-shadow relative w-[80%] lg:w-[54.625rem] h-[5.25rem] rounded-[0.5rem] bg-white flex flex-row items-center mx-auto translate-y-[-3.25rem]">
           {!loading ? (
             <svg
               width="20"
@@ -179,7 +168,7 @@ const Search = () => {
               viewBox="0 0 20 20"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              className="ml-[2.625rem] cursor-pointer"
+              className="ml-[2.625rem] cursor-pointer hidden lg:block"
             >
               <path
                 fillRule="evenodd"
@@ -195,7 +184,7 @@ const Search = () => {
               viewBox="0 0 20 20"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              className="ml-[2.625rem] spinner"
+              className="ml-[2.625rem] spinner hidden lg:block"
             >
               <path
                 fillRule="evenodd"
@@ -210,10 +199,10 @@ const Search = () => {
             placeholder="Buscar aquí..."
             onChange={updateSearch}
             value={search}
-            className="h-full ml-[2.125rem] pr-4 max-w-[39.25rem] w-full text-[#13201E] focus:outline-none placeholder:italic placeholder:text-[#D4D4D4] search-cancel:appearance-none"
+            className="h-full ml-[2.125rem] pr-4 max-w-[39.25rem] w-full text-[#13201E] rounded-[0.500rem] lg:rounded-0 focus:outline-none placeholder:italic placeholder:text-[#D4D4D4] search-cancel:appearance-none"
           />
           <div
-            className="h-[50%] cursor-pointer flex items-center justify-between border-l-[0.063rem] border-[#D4D4D4]"
+            className="h-[50%] cursor-pointer items-center justify-between border-l-[0.063rem] border-[#D4D4D4] hidden lg:flex"
             onClick={toggleFilters}
           >
             <div className="font-[700] text-[#13201E] ml-[1.563rem] relative">
@@ -605,7 +594,7 @@ const Search = () => {
       )}
       {!loading && data && <Main products={data} loading={loading} />}
     </>
-  )
-}
+  );
+};
 
-export default Search
+export default Search;

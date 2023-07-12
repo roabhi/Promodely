@@ -22,8 +22,6 @@ const Main = ({ products, loading }: MainProps) => {
 
   // ? LocalStorage hook
 
-  // const [favorites, setFavorites] = useLocalStorage('promofarma-favorites', [])
-
   let storage: Favorite[];
 
   if (localStorage.getItem("promofarma-favorites")) {
@@ -82,7 +80,7 @@ const Main = ({ products, loading }: MainProps) => {
             product.recommended_prices.length ? (
               <div
                 key={product.product_id}
-                className="product-thumb w-[26.75rem] h-[21.75rem] mb-[3.750rem]"
+                className="product-thumb w-full lg:w-[26.75rem] h-[21.75rem] mb-[3.750rem] px-[0.5rem] lg:px-0"
                 data-faved={alreadyFaved(product.product_id)}
               >
                 <div className="product-thumb-img-container w-full h-[18.75rem] rounded-[0.500rem] bg-[#F3F3F4] relative z-0">
@@ -90,7 +88,6 @@ const Main = ({ products, loading }: MainProps) => {
                   <ul className="product-thumb-actions absolute z-0 right-[1.31rem] bottom-[1.5rem] flex items-center gap-2">
                     <li
                       key={`${product.product_id}-open-card`}
-                      //key={product.product_id}
                       className="product-thumb-action open-card w-[2.250rem] h-[2.250rem] bg-[#D9D9D9] rounded-[0.500rem] flex items-center cursor-pointer"
                       onClick={showProductOverlay}
                       data-manufacturer={product.manufacturer.manufacturer_name}
