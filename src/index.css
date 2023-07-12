@@ -13,16 +13,23 @@
     -moz-transform: rotate(360deg);
   }
 }
+
 @-webkit-keyframes spin {
   100% {
     -webkit-transform: rotate(360deg);
   }
 }
+
 @keyframes spin {
   100% {
     -webkit-transform: rotate(360deg);
     transform: rotate(360deg);
   }
+}
+
+#root {
+  width: 100%;
+  overflow-x: hidden;
 }
 
 svg.spinner {
@@ -73,6 +80,7 @@ div.product-thumb:hover ul.product-thumb-actions {
 div.product-thumb:hover ul.product-thumb-actions li {
   transform: scale(1);
 }
+
 div.product-thumb:hover ul.product-thumb-actions li:active {
   transform: scale(0.9);
 }
@@ -104,4 +112,15 @@ section.overlay {
 
 section.overlay.show {
   display: flex;
+}
+
+@media (max-width: 28.15rem) {
+  section.main-cpontainer {
+    width: 90%;
+    margin: 0 auto !important
+  }
+
+  section.main-container p.product-name {
+    padding: 0 1rem;
+  }
 }
