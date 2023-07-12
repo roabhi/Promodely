@@ -14,38 +14,17 @@
 
 describe("Given the promodely app", () => {
   beforeEach(() => {
-    // Cypress starts out with a blank slate for each test
-    // so we must tell it to visit our website with the `cy.visit()` command.
-    // Since we want to visit the same URL at the start of all our tests,
-    // we include it in our beforeEach function so that it runs before each test
-    // cy.visit("https://example.cypress.io/todo");
     cy.visit("http://localhost:3000");
   });
 
   it("displays a product filter", () => {
-    // We use the `cy.get()` command to get all elements that match the selector.
-    // Then, we use `should` to assert that there are two matched items,
-    // which are the two default items.
     cy.get("input:first")
       .should("have.attr", "placeholder", "Buscar aquí...")
-      .type("sun");
-    //  cy.get("div:first").click();
-    // cy.get("#ajaxElement").should("have.text", "Filtrar");
-    // cy.get("#ajaxElement").contains("Filtrar").click();
+      .type("helio");
     cy.get("div:first").contains("Filtrar").click();
     cy.get("input:first").click();
     cy.get('[type="checkbox"]').check();
     cy.get("button:first").contains("Volver").click();
-
-    //cy.get(".hidden").invoke("show").click();
-    // cy.get("clickbox:first").click();
-    //cy.closest(Selector).click();
-    // We can go even further and check that the default todos each contain
-    // the correct text. We use the `first` and `last` functions
-    // to get just the first and last matched elements individually,
-    // and then perform an assertion with `should`.
-    //   cy.get(".").first().should("have.text", "Pay electric bill");
-    // cy.get(".todo-list li").last().should("have.text", "Walk the dog");
   });
 
   // it("can add new todo items", () => {
@@ -156,3 +135,9 @@ describe("Given the promodely app", () => {
   // });
   //  });
 });
+
+// Cypress starts out with a blank slate for each test
+// so we must tell it to visit our website with the `cy.visit()` command.
+// Since we want to visit the same URL at the start of all our tests,
+// we include it in our beforeEach function so that it runs before each test
+// cy.visit("https://example.cypress.io/todo");
