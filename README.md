@@ -1,6 +1,6 @@
 # Promodely
 
-React project developed at 42 scholl as part of Promofarma + Codely.tv challange during summer 2023
+React project developed at 42 school as part of Promofarma + Codely.tv challenge during summer 2023. 
 
 ## Getting Started with Create React App
 
