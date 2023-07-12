@@ -598,11 +598,6 @@ const Search = () => {
           </div>
         </div>
       </section>
-      {/* {loading && (
-        <p className="max-w-[110.750rem] w-full mx-auto text-center mt-[4rem]">
-          Loading...
-        </p>
-      )} */}
       {error && (
         <p className="max-w-[110.750rem] w-full mx-auto text-center mt-[4rem]">
           {error}
