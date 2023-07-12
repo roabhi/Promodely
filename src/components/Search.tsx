@@ -202,7 +202,7 @@ const Search = () => {
             className="h-full ml-[2.125rem] pr-4 max-w-[39.25rem] w-full text-[#13201E] rounded-[0.500rem] lg:rounded-0 focus:outline-none placeholder:italic placeholder:text-[#D4D4D4] search-cancel:appearance-none"
           />
           <div
-            className="h-[50%] cursor-pointer items-center justify-between border-l-[0.063rem] border-[#D4D4D4] hidden lg:flex"
+            className="h-[50%] cursor-pointer items-center justify-between border-l-[0.063rem] border-[#D4D4D4] flex"
             onClick={toggleFilters}
           >
             <div className="font-[700] text-[#13201E] ml-[1.563rem] relative">
