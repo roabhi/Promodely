@@ -27,15 +27,17 @@ describe("Given the promodely app", () => {
     // Then, we use `should` to assert that there are two matched items,
     // which are the two default items.
     cy.get("input:first")
-      .should("have.attr", "placeholder", "Buscar + enter...")
-      .type("here comes the sun 🌞 my darling..");
+      .should("have.attr", "placeholder", "Buscar aquí...")
+      .type("sun");
     //  cy.get("div:first").click();
     // cy.get("#ajaxElement").should("have.text", "Filtrar");
     // cy.get("#ajaxElement").contains("Filtrar").click();
     cy.get("div:first").contains("Filtrar").click();
     cy.get("input:first").click();
     cy.get('[type="checkbox"]').check();
-    cy.get("button:first").click();
+    cy.get("button:first").contains("Volver").click();
+
+    //cy.get(".hidden").invoke("show").click();
     // cy.get("clickbox:first").click();
     //cy.closest(Selector).click();
     // We can go even further and check that the default todos each contain
