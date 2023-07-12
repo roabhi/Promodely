@@ -79,7 +79,7 @@ const Main = ({ products, loading }: MainProps) => {
   return (
     <>
       <section className="main container max-w-[110.750rem] w-full flex flex-row flex-wrap items-center justify-center gap-[1.250rem] mt-[8.250rem] mx-auto">
-        {products && products.length ? (
+        {!loading && products && products.length ? (
           products.map((product: Product) =>
             product.recommended_prices.length ? (
               <>
