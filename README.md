@@ -6,7 +6,7 @@
 
 ![Promodely faved product](https://i.ibb.co/T23yKtF/Promodely2.png 'Promodely Faved Product')
 
-React project developed at ![42 school in Barcelona](https://www.42barcelona.com/es) as part of Promofarma + Codely.tv challenge during summer 2023.
+React project developed at [42 school in Barcelona](https://www.42barcelona.com/es) as part of Promofarma + Codely.tv challenge during summer 2023.
 
 ## About the companies
 
@@ -32,11 +32,11 @@ Then I created a [basic static HTML skeleton](https://github.com/roabhi/Promodel
 
 Due to CORS the app is only available to test locally so just clone this repo then
 
-### `npm i`
+`npm i`
 
 then
 
-### `npm start`
+`npm start`
 
 ## Contributors
 
